@@ -1,0 +1,12 @@
+[project]
+name = "mail-sender"
+version = "0.1.0"
+description = "Aplicacao simples para envio de emails via SMTP"
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
