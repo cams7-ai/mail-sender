@@ -13,11 +13,13 @@ def test_main_exposes_fastapi_app():
 
 def test_main_run_starts_uvicorn(monkeypatch):
     calls = []
+    monkeypatch.delenv("API_HOST", raising=False)
+    monkeypatch.delenv("API_PORT", raising=False)
     monkeypatch.setattr(main.uvicorn, "run", lambda *args, **kwargs: calls.append((args, kwargs)))
 
     main.run()
 
-    assert calls == [(("main:app",), {"host": "127.0.0.1", "port": 8000, "reload": True})]
+    assert calls == [(("main:app",), {"host": "0.0.0.0", "port": 8000, "reload": False})]
 
 
 def test_create_app_configures_email_sender_factory():
