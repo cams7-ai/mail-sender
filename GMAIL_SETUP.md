@@ -1,6 +1,6 @@
 # Habilitar envio de e-mail pelo Gmail
 
-Este guia mostra como configurar uma conta Gmail para envio de e-mails via SMTP usando esta aplicação.
+Este guia mostra como configurar uma conta Gmail para envio de e-mails via SMTP usando esta API.
 
 ## 1. Ativar a verificação em duas etapas
 
@@ -40,20 +40,24 @@ SMTP_FROM=seu-email@gmail.com
 SMTP_USE_TLS=true
 ```
 
-O valor de `SMTP_FROM` deve ser o mesmo e-mail autenticado em `SMTP_USER`, a menos que outro endereco esteja configurado no Gmail como remetente autorizado.
+O valor de `SMTP_FROM` deve ser o mesmo e-mail autenticado em `SMTP_USER`, a menos que outro endereço esteja configurado no Gmail como remetente autorizado.
 
 ## 4. Enviar um e-mail de teste
 
-Execute:
+Inicie a API:
 
 ```bash
-python .\src\main.py --to outro-email@gmail.com --subject "Teste Gmail" --body "Mensagem enviada pelo mail-sender via Gmail"
+python -m main
 ```
 
-Se estiver usando o ambiente virtual do projeto:
+Em outro terminal, execute:
 
 ```bash
-.\.venv\Scripts\python.exe .\src\main.py --to outro-email@gmail.com --subject "Teste Gmail" --body "Mensagem enviada pelo mail-sender via Gmail"
+Invoke-RestMethod `
+  -Method Post `
+  -Uri "http://127.0.0.1:8000/api/v1/mail/send" `
+  -ContentType "application/json" `
+  -Body '{"to":"outro-email@gmail.com","subject":"Teste Gmail","body":"Mensagem enviada pelo mail-sender via API REST"}'
 ```
 
 ## Erro comum: Username and Password not accepted

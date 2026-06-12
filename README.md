@@ -1,21 +1,17 @@
 # mail-sender
 
-Aplicação Python 3.12 simples para envio de e-mails via SMTP.
+API REST em Python 3.12 com FastAPI para envio de e-mails via SMTP.
 
 ## Requisitos
 
 - Python 3.12 ou superior
 
-## Instalar dependências de desenvolvimento
+## Instalar dependências
 
-```bash
+Antes de reinstalar o projeto no Windows, pare a API se ela estiver rodando por `gmail-reader` ou `python -m main`. O `pip` precisa substituir o executável `.venv\Scripts\gmail-reader.exe` durante a instalação.
+
+```powershell
 python -m pip install -e ".[dev]"
-```
-
-## Executar testes
-
-```bash
-python -m pytest
 ```
 
 ## Configuração
@@ -26,7 +22,7 @@ Para configurar envio pelo Gmail, veja [GMAIL_SETUP.md](GMAIL_SETUP.md).
 
 Crie o `.env` a partir do exemplo:
 
-```bash
+```powershell
 Copy-Item .env.example .env
 ```
 
@@ -36,39 +32,81 @@ Exemplo para Gmail:
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=seu-email@gmail.com
-SMTP_PASSWORD='senha de app gerada pelo google'
+SMTP_PASSWORD='senha de app do gmail'
 SMTP_FROM=seu-email@gmail.com
 SMTP_USE_TLS=true
 ```
 
 Também é possível configurar pela sessão do PowerShell:
 
-```bash
+```powershell
 $env:SMTP_HOST="smtp.gmail.com"
 $env:SMTP_PORT="587"
 $env:SMTP_USER="seu-email@gmail.com"
-$env:SMTP_PASSWORD="senha de app gerada pelo google"
+$env:SMTP_PASSWORD="senha de app do gmail"
 $env:SMTP_FROM="seu-email@gmail.com"
 $env:SMTP_USE_TLS="true"
 ```
 
-## Uso
+## Executar a API
 
-Com SMTP configurado no `.env`:
+Com o projeto instalado em modo editável:
 
-```bash
-python .\src\main.py --to outro-email@gmail.com --subject "Teste Gmail" --body "Email de teste enviado pelo mail-sender via Gmail"
+```powershell
+python -m main
 ```
 
-Argumentos de CLI tem precedência sobre variáveis de ambiente e sobre o `.env`:
+Também é possível iniciar pelo comando instalado:
 
-```bash
-python .\src\main.py --host smtp.gmail.com --port 587 --from seu-email@gmail.com --user seu-email@gmail.com --password "senha de app gerada pelo google" --to outro-email@gmail.com --subject "Teste Gmail" --body "Email de teste enviado pelo mail-sender via Gmail" --use-tls
+```powershell
+gmail-reader
 ```
+
+A API ficará disponível em:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Documentação da API
+
+Com a API em execução, acesse:
+
+- Swagger UI: http://127.0.0.1:8000/docs
+- ReDoc: http://127.0.0.1:8000/redoc
+- OpenAPI JSON: http://127.0.0.1:8000/openapi.json
+
+## Enviar e-mail
+
+Com SMTP configurado no `.env`, execute:
+
+```powershell
+Invoke-RestMethod `
+  -Method Post `
+  -Uri "http://127.0.0.1:8000/api/v1/mail/send" `
+  -ContentType "application/json" `
+  -Body '{"to":"outro-email@gmail.com","subject":"Teste Gmail","body":"Mensagem enviada pelo mail-sender via API REST"}'
+```
+
+Resposta esperada:
+
+```json
+{
+  "message": "E-mail enviado com sucesso."
+}
+```
+
+## Executar testes
+
+```powershell
+python -m pytest
+```
+
+Os testes executam com cobertura mínima de 100% e não enviam e-mails reais.
 
 ## Segurança
 
-- Nao coloque senhas diretamente no código.
+- Não coloque senhas diretamente no código.
 - Prefira `.env` ou `SMTP_PASSWORD` para informar a senha.
 - Para Gmail, use uma senha de app em vez da senha principal da conta.
-- Os testes usam objetos falsos e não enviam e-mails reais.
+- Não exponha `SMTP_PASSWORD` em logs, respostas HTTP ou mensagens de erro.
