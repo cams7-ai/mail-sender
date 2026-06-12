@@ -2,10 +2,9 @@ import os
 
 import pytest
 
-from domain.exceptions import ConfigurationError
-from infrastructure.config import SmtpConfig, load_smtp_config, parse_bool
-from infrastructure.dotenv import load_dotenv
-
+from domain import ConfigurationError
+from infrastructure import SmtpConfig, load_smtp_config, parse_bool
+from infrastructure import load_dotenv
 
 @pytest.mark.parametrize(
     ("value", "expected"),

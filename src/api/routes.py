@@ -4,16 +4,15 @@ from typing import Callable
 from fastapi import APIRouter, HTTPException, Request, status
 
 from api.schemas import EmailRequest, EmailResponse
-from application.use_cases import SendEmailUseCase
-from domain.entities import EmailMessageData
-from domain.exceptions import ConfigurationError
-from domain.ports import EmailSender
+from application import SendEmailUseCase
+from domain import EmailMessageData
+from domain import ConfigurationError
+from domain import EmailSender
 
 router = APIRouter(prefix="/api/v1/mail", tags=["mail"])
 
-
 @router.post("/send", response_model=EmailResponse, status_code=status.HTTP_200_OK)
-def send_email(payload: EmailRequest, request: Request) -> EmailResponse:
+def send_email(payload: EmailRequest, request: Request):
     try:
         sender = _get_email_sender(request)
         use_case = SendEmailUseCase(sender)

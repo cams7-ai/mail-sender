@@ -3,8 +3,8 @@ from smtplib import SMTPException
 from fastapi.testclient import TestClient
 
 import main
-from api.app import create_app
-from domain.exceptions import ConfigurationError
+from api.server import create_app
+from domain import ConfigurationError
 
 
 def test_main_exposes_fastapi_app():

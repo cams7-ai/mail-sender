@@ -1,6 +1,6 @@
-from application.use_cases import SendEmailUseCase
-from domain.entities import EmailMessageData
-from domain.ports import EmailSender
+from application import SendEmailUseCase
+from domain import EmailMessageData
+from domain import EmailSender
 
 
 def test_send_email_use_case_calls_email_sender():

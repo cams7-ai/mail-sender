@@ -1,7 +1,6 @@
-from domain.entities import EmailMessageData
-from infrastructure.config import SmtpConfig
-from infrastructure.smtp_email_sender import SmtpEmailSender
-
+from domain import EmailMessageData
+from infrastructure import SmtpConfig
+from infrastructure import SmtpEmailSender
 
 def test_smtp_email_sender_uses_tls_and_login(monkeypatch):
     smtp_instances = []

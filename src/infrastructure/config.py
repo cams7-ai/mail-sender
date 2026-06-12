@@ -1,11 +1,10 @@
 from dataclasses import dataclass
 import os
 
-from domain.exceptions import ConfigurationError
+from domain import ConfigurationError
 
 TRUE_VALUES = {"1", "true", "t", "yes", "y", "on"}
 FALSE_VALUES = {"0", "false", "f", "no", "n", "off"}
-
 
 @dataclass(frozen=True)
 class SmtpConfig:
@@ -15,7 +14,6 @@ class SmtpConfig:
     user: str | None = None
     password: str | None = None
     use_tls: bool = True
-
 
 def parse_bool(value: str | bool | None) -> bool:
     if value is None:
@@ -30,8 +28,7 @@ def parse_bool(value: str | bool | None) -> bool:
         return False
     raise ConfigurationError(f"Valor booleano inválido: {value!r}")
 
-
-def load_smtp_config() -> SmtpConfig:
+def load_smtp_config():
     tls_value = os.getenv("SMTP_USE_TLS")
     return SmtpConfig(
         host=_required(os.getenv("SMTP_HOST"), "servidor SMTP"),
@@ -42,12 +39,10 @@ def load_smtp_config() -> SmtpConfig:
         use_tls=True if tls_value is None else parse_bool(tls_value),
     )
 
-
 def _required(value: str | None, field_name: str) -> str:
     if value is None or value == "":
         raise ConfigurationError(f"Configuração obrigatória ausente: {field_name}")
     return value
-
 
 def _parse_port(value: str | None) -> int:
     raw_port = _required(value, "porta SMTP")

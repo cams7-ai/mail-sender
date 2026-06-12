@@ -1,13 +1,10 @@
 from fastapi import FastAPI
 
 from api.routes import router
-from infrastructure.config import load_smtp_config
-from infrastructure.dotenv import load_dotenv
-from infrastructure.smtp_email_sender import SmtpEmailSender
+from infrastructure import load_smtp_config
+from infrastructure import SmtpEmailSender
 
-
-def create_app() -> FastAPI:
-    load_dotenv()
+def create_app():
     app = FastAPI(
         title="mail-sender",
         version="0.2.0",
@@ -19,6 +16,5 @@ def create_app() -> FastAPI:
     app.include_router(router)
     return app
 
-
-def _create_email_sender() -> SmtpEmailSender:
+def _create_email_sender():
     return SmtpEmailSender(load_smtp_config())

@@ -1,9 +1,8 @@
 from email.message import EmailMessage
 import smtplib
 
-from domain.entities import EmailMessageData
-from infrastructure.config import SmtpConfig
-
+from domain import EmailMessageData
+from infrastructure import SmtpConfig
 
 class SmtpEmailSender:
     def __init__(self, config: SmtpConfig) -> None:

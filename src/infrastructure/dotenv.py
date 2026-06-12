@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 
-
 def load_dotenv(path: str | Path = ".env") -> None:
     env_path = Path(path)
     if not env_path.exists():

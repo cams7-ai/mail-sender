@@ -1,6 +1,5 @@
-from domain.entities import EmailMessageData
-from domain.ports import EmailSender
-
+from domain import EmailMessageData
+from domain import EmailSender
 
 class SendEmailUseCase:
     def __init__(self, email_sender: EmailSender) -> None:
