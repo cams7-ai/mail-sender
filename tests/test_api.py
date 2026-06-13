@@ -13,6 +13,7 @@ def test_main_exposes_fastapi_app():
 
 def test_main_run_starts_uvicorn(monkeypatch):
     calls = []
+    monkeypatch.setattr(main, "load_dotenv", lambda: None)
     monkeypatch.delenv("API_HOST", raising=False)
     monkeypatch.delenv("API_PORT", raising=False)
     monkeypatch.setattr(main.uvicorn, "run", lambda *args, **kwargs: calls.append((args, kwargs)))
@@ -54,6 +55,7 @@ def test_send_email_endpoint_returns_success():
             "to": "to@example.com",
             "subject": "Assunto",
             "body": "Mensagem",
+            "message_type": "HTML",
         },
     )
 
@@ -62,6 +64,7 @@ def test_send_email_endpoint_returns_success():
     assert sender.messages[0].recipient == "to@example.com"
     assert sender.messages[0].subject == "Assunto"
     assert sender.messages[0].body == "Mensagem"
+    assert sender.messages[0].message_type == "HTML"
 
 
 def test_documentation_endpoints_are_available():
@@ -77,6 +80,11 @@ def test_documentation_endpoints_are_available():
     assert "ReDoc" in redoc_response.text
     assert openapi_response.status_code == 200
     assert openapi_response.json()["info"]["title"] == "mail-sender"
+    schemas = openapi_response.json()["components"]["schemas"]
+    assert "ErrorResponse" in schemas
+    assert "HTTPValidationError" not in schemas
+    assert "ValidationError" not in schemas
+    assert openapi_response.json() == client.get("/openapi.json").json()
 
 
 def test_send_email_endpoint_rejects_invalid_payload():
@@ -88,6 +96,12 @@ def test_send_email_endpoint_rejects_invalid_payload():
     )
 
     assert response.status_code == 422
+    assert response.json() == {
+        "error": {
+            "code": "validation_error",
+            "message": "Dados de entrada inválidos.",
+        }
+    }
 
 
 def test_send_email_endpoint_returns_503_for_configuration_error():
@@ -103,7 +117,12 @@ def test_send_email_endpoint_returns_503_for_configuration_error():
     )
 
     assert response.status_code == 503
-    assert response.json() == {"detail": "Configuração inválida."}
+    assert response.json() == {
+        "error": {
+            "code": "configuration_error",
+            "message": "Configuração inválida.",
+        }
+    }
 
 
 def test_send_email_endpoint_returns_500_for_smtp_error():
@@ -119,7 +138,12 @@ def test_send_email_endpoint_returns_500_for_smtp_error():
     )
 
     assert response.status_code == 500
-    assert response.json() == {"detail": "Falha ao enviar e-mail."}
+    assert response.json() == {
+        "error": {
+            "code": "email_send_error",
+            "message": "Falha ao enviar e-mail.",
+        }
+    }
 
 
 def test_send_email_endpoint_returns_503_without_factory():
@@ -137,7 +161,26 @@ def test_send_email_endpoint_returns_503_without_factory():
     )
 
     assert response.status_code == 503
-    assert response.json() == {"detail": "Configuração de envio de e-mail ausente."}
+    assert response.json() == {
+        "error": {
+            "code": "configuration_error",
+            "message": "Configuração de envio de e-mail ausente.",
+        }
+    }
+
+
+def test_unknown_endpoint_returns_error_response():
+    client, _sender = _make_client(FakeEmailSender())
+
+    response = client.get("/api/v1/mail/unknown")
+
+    assert response.status_code == 404
+    assert response.json() == {
+        "error": {
+            "code": "not_found",
+            "message": "Recurso não encontrado.",
+        }
+    }
 
 
 def _make_client(sender):

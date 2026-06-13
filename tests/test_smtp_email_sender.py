@@ -51,6 +51,28 @@ def test_smtp_email_sender_skips_tls_and_login_without_credentials(monkeypatch):
     assert smtp.login_args is None
 
 
+def test_smtp_email_sender_builds_html_message(monkeypatch):
+    smtp_instances = []
+    monkeypatch.setattr(
+        "infrastructure.smtp_email_sender.smtplib.SMTP",
+        lambda host, port: _make_smtp(host, port, smtp_instances),
+    )
+    config = SmtpConfig(
+        host="smtp.example.com",
+        port=25,
+        sender="from@example.com",
+        use_tls=False,
+    )
+
+    SmtpEmailSender(config).send(EmailMessageData("to@example.com", "Assunto", "<strong>Mensagem</strong>", "HTML"))
+
+    smtp = smtp_instances[0]
+    assert smtp.sent_message.is_multipart()
+    html_part = smtp.sent_message.get_payload()[0]
+    assert html_part.get_content_type() == "text/html"
+    assert html_part.get_content().strip() == "<strong>Mensagem</strong>"
+
+
 def _make_smtp(host, port, instances):
     smtp = FakeSMTP(host, port)
     instances.append(smtp)

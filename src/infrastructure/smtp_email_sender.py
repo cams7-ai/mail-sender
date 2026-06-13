@@ -22,5 +22,8 @@ class SmtpEmailSender:
         email_message["From"] = self._config.sender
         email_message["To"] = message.recipient
         email_message["Subject"] = message.subject
-        email_message.set_content(message.body)
+        if message.message_type == "HTML":
+            email_message.add_alternative(message.body, subtype="html")
+        else:
+            email_message.set_content(message.body)
         return email_message

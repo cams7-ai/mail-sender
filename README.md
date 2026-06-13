@@ -1,4 +1,4 @@
-# mail-sender
+# Mail Sender
 
 API REST em Python 3.12 com FastAPI para envio de e-mails via SMTP.
 
@@ -95,6 +95,21 @@ Resposta esperada:
   "message": "E-mail enviado com sucesso."
 }
 ```
+
+## Erros da API
+
+Todos os erros retornados pelos endpoints usam o schema `ErrorResponse`:
+
+```json
+{
+  "error": {
+    "code": "string",
+    "message": "string"
+  }
+}
+```
+
+As mensagens de erro são retornadas em português do Brasil.
 
 ## Executar testes
 
