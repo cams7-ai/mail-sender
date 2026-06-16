@@ -1,4 +1,4 @@
-# mail-sender
+# Mail Sender
 
 API REST em Python 3.12 com FastAPI para envio de e-mails via SMTP.
 
