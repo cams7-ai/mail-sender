@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [project.scripts]
-gmail-reader = "main:run"
+mail-sender = "main:run"
 
 [project.optional-dependencies]
 dev = [

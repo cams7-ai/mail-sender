@@ -102,20 +102,31 @@ $env:SMTP_FROM="seu-email@gmail.com"
 $env:SMTP_USE_TLS="true"
 ```
 
-## Instalação
+## Execução Local
 
-Instale o projeto em modo editável com as dependências de desenvolvimento:
+Crie e ative o ambiente virtual:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\activate
+```
+
+Instale as dependências:
 
 ```powershell
 python -m pip install -e ".[dev]"
 ```
 
-## Execução
-
 Execute a API:
 
 ```powershell
 python -m main
+```
+
+Ou use o comando instalado pelo pacote:
+
+```powershell
+mail-sender
 ```
 
 A API ficará disponível, por padrão, em:
